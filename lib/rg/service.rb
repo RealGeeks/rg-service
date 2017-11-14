@@ -14,13 +14,13 @@ module RG
     # any required parameters before proceeding...
     include Virtus.model
 
-  #   # All services have a :clock attribute that can be passed on construction.
-  #   attribute :clock, Clock, default: :default_clock
-  #
-  #   # If not provided, this will default to Clock.for_current_time.
-  #   private def default_clock
-  #     Clock.for_current_time
-  #   end
+    # All services have a :clock attribute that can be passed on construction.
+    attribute :clock, Clock, default: :default_clock
+
+    # If not provided, this will default to Clock.for_current_time.
+    private def default_clock
+      Clock.for_current_time
+    end
 
     # Services are performed by instances, but this provides a more
     # convenient way of invoking them.
@@ -44,10 +44,10 @@ module RG
     class Result
       include Virtus.model
       attribute :status,  Symbol
-  #     attribute :message, String
-  #     attribute :object
-  #     attribute :data,    Hash
-  #     attribute :errors,  Array[String]
+      attribute :message, String
+      attribute :object
+      attribute :data,    Hash
+      attribute :errors,  Array[String]
 
       VALID_STATUSES = [
         :success,
@@ -60,54 +60,50 @@ module RG
         end
 
         super # hey, don't overlook this ;)
-  #
-  #       # If given a (non-nil) object: arg, put it in #data[:object]
-  #       if object.present?
-  #         data[:object] ||= object
-  #       end
-  #
-  #       # Always make sure there's a :status field in #data
-  #       data[:status] ||= friendly_status
+
+        # If given a (non-nil) object: arg, put it in #data[:object]
+        if object.present?
+          data[:object] ||= object
+        end
+
+        # Always make sure there's a :status field in #data
+        data[:status] ||= friendly_status
       end
 
       def success? ; :success == status ; end
       def failure? ; :failure == status ; end
 
-  #     def description
-  #       "%<status>s:\n%<message>s" % {
-  #         status: friendly_status,
-  #         message: message,
-  #       }
-  #     end
-  #
-  #     def errors
-  #       @errors.dup
-  #     end
-  #
-  #     private
-  #
-  #     def friendly_status
-  #       status.to_s.capitalize
-  #     end
+      def description
+        "%<status>s:\n%<message>s" % {
+          status: friendly_status,
+          message: message,
+        }
+      end
+
+      private
+
+      def friendly_status
+        status.to_s.capitalize
+      end
     end
 
-  #   # BEGIN Convenience constructors for service results
-  #   def self.success(message: nil, object: nil, data: {}, errors: [])
-  #     ::Service::Result.new( status: :success, message: message, object: object, data: data, errors: errors )
-  #   end
-  #
-  #   def self.disabled
-  #     ::Service::Result.new( status: :success )
-  #   end
-  #
-  #   def self.nothingtodohere(message=nil)
-  #     ::Service::Result.new( status: :success, message: message )
-  #   end
-  #
-  #   def self.failure(message: nil, object: nil, data: {}, errors: [])
-  #     ::Service::Result.new( status: :failure, message: message, object: object, data: data, errors: errors )
-  #   end
-  #
+    # BEGIN Convenience constructors for service results
+    def self.success(message: nil, object: nil, data: {}, errors: [])
+      ::RG::Service::Result.new( status: :success, message: message, object: object, data: data, errors: errors )
+    end
+
+    def self.disabled
+      RG::Service::Result.new( status: :success )
+    end
+
+    def self.nothingtodohere(message=nil)
+      RG::Service::Result.new( status: :success, message: message )
+    end
+
+    def self.failure(message: nil, object: nil, data: {}, errors: [])
+      RG::Service::Result.new( status: :failure, message: message, object: object, data: data, errors: errors )
+    end
+
   #   def self.result_from_exception(e)
   #     message = RG.format_exception(e)
   #     data = {
@@ -119,9 +115,9 @@ module RG
   #       },
   #       exception: e,
   #     }
-  #     ::Service::Result.new( status: :failure, message: message, data: data )
+  #     RG::Service::Result.new( status: :failure, message: message, data: data )
   #   end
-  #   # END convenience constructors
+    # END convenience constructors
 
   #   # Some services may need to be enabled or disabled for testing.
   #   # DRY up the boilerplate that makes this happen, so that service
