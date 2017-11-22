@@ -8,7 +8,7 @@ at Real Geeks.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rg-service', git: "git@github.com:RealGeeks/rg-service.git", tag: "v1.0"
+gem 'rg-service', git: "git@github.com:RealGeeks/rg-service.git", tag: "v1.0.0"
 ```
 
 And then execute:
