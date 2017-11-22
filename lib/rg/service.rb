@@ -47,6 +47,10 @@ module RG
       handle_exception e
     end
 
+    def perform
+      raise NotImplementedError, "Subclass must implement!"
+    end
+
     private
 
     # NOTE: subclasses may override
