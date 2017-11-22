@@ -104,20 +104,50 @@ module RG
       RG::Service::Result.new( status: :failure, message: message, object: object, data: data, errors: errors )
     end
 
-  #   def self.result_from_exception(e)
-  #     message = RG.format_exception(e)
-  #     data = {
-  #       # FIXME: consider change :error to :exception ?  # #unify-service-results
-  #       error: {
-  #         class:     e.class.name,
-  #         msg:       e.message,
-  #         backtrace: e.backtrace,
-  #       },
-  #       exception: e,
-  #     }
-  #     RG::Service::Result.new( status: :failure, message: message, data: data )
-  #   end
+    def self.result_from_exception(e)
+      message = format_exception(e)
+      data = {
+        error: {
+          class:     e.class.name,
+          msg:       e.message,
+          backtrace: e.backtrace,
+        },
+        exception: e,
+      }
+      RG::Service::Result.new( status: :failure, message: message, data: data )
+    end
     # END convenience constructors
+
+    EXCEPTION_TEMPLATE = <<-EOF
+Exception:  %<err_class>s
+Message:    %<err_msg>s
+
+Backtrace:
+%<err_backtrace>s"
+    EOF
+
+    def self.format_exception(e, originating_file: nil)
+      EXCEPTION_TEMPLATE % {
+        err_class:     e.class.name,
+        err_msg:       e.message,
+        err_backtrace: format_backtrace( e, originating_file: originating_file ),
+      }
+    end
+
+    def self.format_backtrace(e, originating_file: nil)
+      if originating_file.present?
+        truncate_below = e.backtrace.index {|line|
+          line.include?(originating_file)
+        }
+        range = (0..truncate_below)
+        e.backtrace[range].join("\n")
+      else
+        e.backtrace.join("\n")
+      end
+    end
+
+
+
 
   #   # Some services may need to be enabled or disabled for testing.
   #   # DRY up the boilerplate that makes this happen, so that service

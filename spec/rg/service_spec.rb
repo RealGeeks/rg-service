@@ -11,7 +11,7 @@ RSpec.describe RG::Service do
     end
   end
 
-  specify "calling .perform on a service class returns a result" do
+  specify "calling .perform on a service class returns a Result instance" do
     result = SuccessfulService.perform
     expect( result ).to be_kind_of( RG::Service::Result )
     expect( result ).to be_success

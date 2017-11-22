@@ -105,6 +105,38 @@ RSpec.describe RG::Service::Result do
       expect( r ).to be_failure
     end
 
-    #TODO: specify .result_from_exception when I have more brain
+    describe ".result_from_exception" do
+      let(:err_msg) { "Nope. No way, nohow." }
+      let(:err) {
+        begin
+          raise ArgumentError, err_msg
+        rescue => e
+          break e # break will return from the begin/end block
+        end
+      }
+      let(:r) { RG::Service.result_from_exception(err) }
+
+      it "wraps an exception, putting it in result.data[:exception]" do
+        expect( r.data[:exception] ).to be( err )
+      end
+
+      it "puts the exception class name, message, and backtrace in result.data[:error]" do
+        err_data = r.data[:error]
+        aggregate_failures do
+          expect( err_data[:class] ).to eq( "ArgumentError" )
+          expect( err_data[:msg] ).to eq( "Nope. No way, nohow." )
+          expect( err_data[:class] ).to eq( "ArgumentError" )
+        end
+      end
+
+      it "formats the error message and puts it in result.message" do
+        aggregate_failures do
+          expect( r.message ).to match( /Exception:\s+ArgumentError/ )
+          expect( r.message ).to match( /Message:\s+#{err_msg}/ )
+          expect( r.message ).to match( /Backtrace:\n#{__FILE__}/ ) # current file should be at top of backtrace... until Ruby reverses backtrace :D
+        end
+      end
+
+    end
   end
 end
