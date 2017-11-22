@@ -87,65 +87,68 @@ module RG
       end
     end
 
-    # BEGIN Convenience constructors for service results
-    def self.success(message: nil, object: nil, data: {}, errors: [])
-      ::RG::Service::Result.new( status: :success, message: message, object: object, data: data, errors: errors )
-    end
+    module ConvenienceConstructors
+      def success(message: nil, object: nil, data: {}, errors: [])
+        ::RG::Service::Result.new( status: :success, message: message, object: object, data: data, errors: errors )
+      end
 
-    def self.disabled
-      RG::Service::Result.new( status: :success )
-    end
+      def disabled
+        RG::Service::Result.new( status: :success )
+      end
 
-    def self.nothingtodohere(message=nil)
-      RG::Service::Result.new( status: :success, message: message )
-    end
+      def nothingtodohere(message=nil)
+        RG::Service::Result.new( status: :success, message: message )
+      end
 
-    def self.failure(message: nil, object: nil, data: {}, errors: [])
-      RG::Service::Result.new( status: :failure, message: message, object: object, data: data, errors: errors )
-    end
+      def failure(message: nil, object: nil, data: {}, errors: [])
+        RG::Service::Result.new( status: :failure, message: message, object: object, data: data, errors: errors )
+      end
 
-    def self.result_from_exception(e)
-      message = format_exception(e)
-      data = {
-        error: {
-          class:     e.class.name,
-          msg:       e.message,
-          backtrace: e.backtrace,
-        },
-        exception: e,
-      }
-      RG::Service::Result.new( status: :failure, message: message, data: data )
+      def result_from_exception(e)
+        message = format_exception(e)
+        data = {
+          error: {
+            class:     e.class.name,
+            msg:       e.message,
+            backtrace: e.backtrace,
+          },
+          exception: e,
+        }
+        RG::Service::Result.new( status: :failure, message: message, data: data )
+      end
     end
-    # END convenience constructors
+    extend ConvenienceConstructors
 
-    EXCEPTION_TEMPLATE = <<-EOF
+    module ExceptionFormatting
+      EXCEPTION_TEMPLATE = <<-EOF
 Exception:  %<err_class>s
 Message:    %<err_msg>s
 
 Backtrace:
 %<err_backtrace>s"
-    EOF
+      EOF
 
-    def self.format_exception(e, originating_file: nil)
-      EXCEPTION_TEMPLATE % {
-        err_class:     e.class.name,
-        err_msg:       e.message,
-        err_backtrace: format_backtrace( e, originating_file: originating_file ),
-      }
-    end
-
-    def self.format_backtrace(e, originating_file: nil)
-      if originating_file.present?
-        truncate_below = e.backtrace.index {|line|
-          line.include?(originating_file)
+      def format_exception(e, originating_file: nil)
+        EXCEPTION_TEMPLATE % {
+          err_class:     e.class.name,
+          err_msg:       e.message,
+          err_backtrace: format_backtrace( e, originating_file: originating_file ),
         }
-        range = (0..truncate_below)
-        e.backtrace[range].join("\n")
-      else
-        e.backtrace.join("\n")
+      end
+
+      def format_backtrace(e, originating_file: nil)
+        if originating_file.present?
+          truncate_below = e.backtrace.index {|line|
+            line.include?(originating_file)
+          }
+          range = (0..truncate_below)
+          e.backtrace[range].join("\n")
+        else
+          e.backtrace.join("\n")
+        end
       end
     end
-
+    extend ExceptionFormatting
 
 
 
