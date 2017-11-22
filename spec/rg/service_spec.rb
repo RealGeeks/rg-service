@@ -19,6 +19,4 @@ RSpec.describe RG::Service do
 
   #TOOD: allow callbacks to be specified for service lifecycle events
 
-  #TODO: specify KillSwitch behavior when I have more brain
-
 end
