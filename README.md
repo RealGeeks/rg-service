@@ -1,15 +1,14 @@
-# Rg::Service
+# RG::Service
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rg/service`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This is a basic service object framework for use in Rails applications
+at Real Geeks.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rg-service'
+gem 'rg-service', git: "git@github.com:RealGeeks/rg-service.git", tag: "v1.0"
 ```
 
 And then execute:
