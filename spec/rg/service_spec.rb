@@ -17,6 +17,4 @@ RSpec.describe RG::Service do
     expect( result ).to be_success
   end
 
-  #TOOD: allow callbacks to be specified for service lifecycle events
-
 end

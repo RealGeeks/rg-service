@@ -44,7 +44,13 @@ module RG
       return result
 
     rescue StandardError => e
-      # TODO: figure out how to define callbacks for this sort of thing
+      handle_exception e
+    end
+
+    private
+
+    # NOTE: subclasses may override
+    def self.handle_exception(e)
       if defined?(Raven)
         Raven.capture_exception e
       end
