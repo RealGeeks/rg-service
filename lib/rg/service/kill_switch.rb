@@ -35,7 +35,7 @@ class Service
     module Predicates
       def enabled?
         if self.enabled.nil?
-          self.enabled = ::Service::KillSwitch.all_enabled
+          self.enabled = RG::Service::KillSwitch.all_enabled
         end
 
         !!self.enabled
